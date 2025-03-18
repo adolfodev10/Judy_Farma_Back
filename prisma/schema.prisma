@@ -1,0 +1,71 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model Users {
+    id         String   @id @default(uuid())
+    name       String
+    email      String?  @unique
+    funcao     String
+    senha      String
+    product_id String?
+    client_id  String?
+
+    client     Clients? @relation(fields: [client_id], references: [id_client])
+    product    Products? @relation(fields: [product_id], references: [id_product])
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+}
+
+model Products {
+    id_product   String   @id @default(uuid())
+    name_product String
+    price        Float
+    quantity     Int
+    description  String
+    client_id    String?
+
+    client       Clients? @relation(fields: [client_id], references: [id_client])
+    users        Users[]
+
+    created_at   DateTime @default(now())
+    updated_at   DateTime @updatedAt
+}
+
+model Clients {
+    id_client   String   @id @default(uuid())
+    name        String
+    telefone    String
+    invoice_id  String?  @unique
+
+    users       Users[]
+    invoices    Invoices? @relation(fields: [invoice_id], references: [id_invoice])
+    products    Products[]
+
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt
+}
+
+model Invoices {
+    id_invoice String   @id @default(uuid())
+    client_id  String?
+    product_id String
+    date       DateTime
+
+    client     Clients?
+}
+
+model Venda {
+    id          String   @id @default(uuid())
+    name        String
+    price       Float
+    description String
+    quantity    Int
+    date        DateTime
+}
