@@ -8,48 +8,54 @@ datasource db {
 }
 
 model Users {
-    id         String   @id @default(uuid())
-    name       String
-    email      String?  @unique
-    funcao     String
+    id         String     @id @default(uuid())
+    name       String     @unique
+    funcao_id  String
+    funcao     Funcao[]   @relation("FuncaoToUser")
+    client     Clients[]  @relation("ClientToUser")
+    product    Products[] @relation("ProductToUser")
     senha      String
-    product_id String?
-    client_id  String?
+    created_at DateTime   @default(now())
+    updated_at DateTime   @updatedAt
+}
 
-    client     Clients? @relation(fields: [client_id], references: [id_client])
-    product    Products? @relation(fields: [product_id], references: [id_product])
-
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
+model Funcao {
+    id_funcao   String  @id @default(uuid())
+    name        String
+    description String?
+    user_id     String
+    user        Users   @relation("FuncaoToUser", fields: [user_id], references: [id])
 }
 
 model Products {
-    id_product   String   @id @default(uuid())
+    id_product   String  @id @default(uuid())
     name_product String
     price        Float
     quantity     Int
     description  String
     client_id    String?
 
-    client       Clients? @relation(fields: [client_id], references: [id_client])
-    users        Users[]
+    client  Clients? @relation(fields: [client_id], references: [id_client])
+    user_id String
+    user    Users    @relation("ProductToUser", fields: [user_id], references: [id])
 
-    created_at   DateTime @default(now())
-    updated_at   DateTime @updatedAt
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
 }
 
 model Clients {
-    id_client   String   @id @default(uuid())
-    name        String
-    telefone    String
-    invoice_id  String?  @unique
+    id_client  String  @id @default(uuid())
+    name       String
+    telefone   String
+    invoice_id String? @unique
 
-    users       Users[]
-    invoices    Invoices? @relation(fields: [invoice_id], references: [id_invoice])
-    products    Products[]
+    user_id  String
+    user     Users      @relation("ClientToUser", fields: [user_id], references: [id])
+    invoices Invoices?  @relation(fields: [invoice_id], references: [id_invoice])
+    products Products[]
 
-    created_at  DateTime @default(now())
-    updated_at  DateTime @updatedAt
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
 }
 
 model Invoices {
@@ -58,7 +64,7 @@ model Invoices {
     product_id String
     date       DateTime
 
-    client     Clients?
+    client Clients?
 }
 
 model Venda {

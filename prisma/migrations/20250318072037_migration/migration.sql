@@ -4,7 +4,7 @@ CREATE TABLE `Users` (
     `name` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NULL,
     `funcao` VARCHAR(191) NOT NULL,
-    `senha` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
     `product_id` VARCHAR(191) NULL,
     `client_id` VARCHAR(191) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
