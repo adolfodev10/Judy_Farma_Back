@@ -20,6 +20,7 @@ export const Login = async (app: FastifyInstance) => {
       const user = await prisma.users.findUnique({
         where: {
           email,
+          user_status: "ACTIVO"
         },
       });
 
@@ -36,14 +37,17 @@ export const Login = async (app: FastifyInstance) => {
       }
 
       const token = await generateToken({
-        sub: user.id,
-        name: user.name
+        id_user: user.id_user,
+        email: user.email
       });
 
       const userWithoutPassword = {
-        id: user.id,
+        id_user: user.id_user,
         name: user.name,
         email: user.email,
+        phone_number:user.phone_number,
+        born: user.born,
+        id_funcao: user.funcao_id
       }
       return { user: userWithoutPassword, token };
     }

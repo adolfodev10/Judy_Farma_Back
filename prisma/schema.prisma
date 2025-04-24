@@ -8,54 +8,70 @@ datasource db {
 }
 
 model Users {
-    id         String     @id @default(uuid())
-    name       String     @unique
-    funcao_id  String
-    funcao     Funcao[]   @relation("FuncaoToUser")
-    client     Clients[]  @relation("ClientToUser")
-    product    Products[] @relation("ProductToUser")
-    senha      String
-    created_at DateTime   @default(now())
-    updated_at DateTime   @updatedAt
+    id_user      String                @id @default(uuid())
+    name         String
+    email        String                @unique
+    phone_number String?               @unique
+    senha        String
+    avatar       String?
+    born         DateTime
+    created_at   DateTime              @default(now())
+    funcao_id    String
+    updated_at   DateTime              @updatedAt
+    user_status  UserStatus            @default(ACTIVO)
+    avatarImages AvatarImagesArchive[] @relation("UserToAvatarImages")
+    funcao       Funcao                @relation("UserToFuncao", fields: [funcao_id], references: [id_funcao], onDelete: Cascade)
+    Products     Products[]
+    Venda        Venda[]
+}
+
+model AvatarImagesArchive {
+    id_avatar  String   @id @default(uuid())
+    image      String
+    user_id    String
+    created_at DateTime @default(now())
+    user       Users    @relation("UserToAvatarImages", fields: [user_id], references: [id_user], onDelete: Cascade)
+
+    @@map("AvatarImagesHistoric")
 }
 
 model Funcao {
-    id_funcao   String  @id @default(uuid())
-    name        String
+    id_funcao   String      @id @default(uuid())
+    name_funcao String
     description String?
-    user_id     String
-    user        Users   @relation("FuncaoToUser", fields: [user_id], references: [id])
+    created_at  DateTime    @default(now())
+    updated_at  DateTime    @updatedAt
+    status      TableStatus @default(ACTIVO)
+    users       Users[]     @relation("UserToFuncao")
 }
 
 model Products {
-    id_product   String  @id @default(uuid())
+    id_product   String   @id @default(uuid())
     name_product String
+    description  String?
+    logo         String?
+    user_id      String
+    created_at   DateTime @default(now())
+    updated_at   DateTime @updatedAt
+    user         Users    @relation(fields: [usersId_user], references: [id_user])
     price        Float
     quantity     Int
-    description  String
     client_id    String?
-
-    client  Clients? @relation(fields: [client_id], references: [id_client])
-    user_id String
-    user    Users    @relation("ProductToUser", fields: [user_id], references: [id])
-
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
+    venda        Venda[]
+    client       Clients? @relation(fields: [client_id], references: [id_client])
+    usersId_user String
 }
 
 model Clients {
-    id_client  String  @id @default(uuid())
+    id_client  String     @id @default(uuid())
     name       String
     telefone   String
-    invoice_id String? @unique
-
-    user_id  String
-    user     Users      @relation("ClientToUser", fields: [user_id], references: [id])
-    invoices Invoices?  @relation(fields: [invoice_id], references: [id_invoice])
-    products Products[]
-
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
+    invoice_id String?    @unique
+    user_id    String
+    invoices   Invoices?  @relation(fields: [invoice_id], references: [id_invoice])
+    products   Products[]
+    created_at DateTime   @default(now())
+    updated_at DateTime   @updatedAt
 }
 
 model Invoices {
@@ -63,15 +79,27 @@ model Invoices {
     client_id  String?
     product_id String
     date       DateTime
-
-    client Clients?
+    client     Clients?
 }
 
 model Venda {
-    id          String   @id @default(uuid())
-    name        String
-    price       Float
-    description String
-    quantity    Int
-    date        DateTime
+    id           String   @id @default(uuid())
+    description  String
+    product_id   String
+    user_id      String
+    created_at   DateTime @default(now())
+    updated_at   DateTime @updatedAt
+    product      Products @relation(fields: [product_id], references: [id_product], onDelete: Cascade)
+    usersId_user String?
+    Users        Users?   @relation(fields: [usersId_user], references: [id_user])
+}
+
+enum UserStatus {
+    ACTIVO
+    INATIVO
+}
+
+enum TableStatus {
+    ACTIVO
+    INATIVO
 }

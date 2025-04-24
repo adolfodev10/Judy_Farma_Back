@@ -2,7 +2,6 @@ import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { createUserSchema } from "../../modules/validations/user/create";
 import { prisma } from "../../lib/prismaclient";
-import { randomUUID } from "crypto";
 import { hashPassword } from "../../modules/services/bcrypt/hashPassword";
 
 
@@ -13,51 +12,49 @@ export const CreateUser = async (app: FastifyInstance) => {
         },
     },
         async (req, res) => {
-            const { name, funcao_id, senha } = req.body;
+            const { name, email, senha, phone_number, avatar, born, funcao_id } = req.body;
 
             const userExists = await prisma.users.findFirst({
                 where: {
                     OR: [
                         {
-                            name,
+                            email,
                         },
+                        {
+                            phone_number,
+                        }
                     ]
                 }
             })
 
             if (userExists) {
-                res.status(400).send({ error: 'Name already exists' });
-                return;
+                return res.status(400).send({ error: 'Email or Phone Number already exists' });
             }
 
-            const funcao = prisma.users.findUnique({
+            const funcao = await prisma.funcao.findUnique({
                 where: {
-                    id: funcao_id,
-                }
-            })
+                    id_funcao: funcao_id,
+                },
+            });
 
             if (!funcao) {
-                res.status(400).send({ error: 'Funcionário not found' });
-                return;
+                return res.status(404).send({ error: 'Funcao not found' });
             }
             const hashedPassword = await hashPassword(senha);
 
             const user = await prisma.users.create({
                 data: {
                     name,
+                    email,
                     senha: hashedPassword,
-                    funcao: {
-                        connect:{
-                            id_funcao : funcao_id
-                        }
-                    }
+                    phone_number,
+                    avatar,
+                    born,
+                    funcao_id,
+                    user_status: 'ACTIVO',
                 },
             });
-            if(!user){
-                res.status(404).send({message:"User not found"});
-            }
             return res.status(201).send(user);
-
         }
     )
 } 

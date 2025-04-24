@@ -2,40 +2,50 @@ import { fastify } from "./lib/fastify";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import fastifyCors from "@fastify/cors";
 import { RootRoute } from './routes/root-route';
-import { DeleteClient } from './routes/Client/delete';
-import { CreateClient } from './routes/Client/create';
-import { UpdateClient } from './routes/Client/update';
-import { GetClient } from "./routes/Client/get";
+// import { DeleteClient } from './routes/Client/delete';
+// import { CreateClient } from './routes/Client/create';
+// import { UpdateClient } from './routes/Client/update';
+// import { GetClient } from "./routes/Client/get";
 import { CreateUser } from "./routes/User/create";
 import { GetUser } from "./routes/User/get";
 import { CreateFuncao } from "./routes/Funcao/create";
 import { GetAllFuncao } from "./routes/Funcao/get";
-// import multipart from "@fastify/multipart";
+import { Login } from "./routes/Auth/login";
+import { ValidationToken } from "./routes/Auth/validation";
+import { GetFuncaoById } from "./routes/Funcao/getFuncaoById";
+import { GetFuncaoByName } from "./routes/Funcao/getFuncaoByName";
+import { GetAllProduct } from "./routes/Product/get";
+import multipart from "@fastify/multipart";
 
 const app = fastify;
-
 const port = Number(process.env.PORT) || 3300;
-
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler);
 
 app.register(fastifyCors, {
-    origin: "*",
-    credentials:true,
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'https://judyfarma.vercel.app',
+        'https://judyfarma-support.vercel.app'
+    ],
+    credentials: true,
 });
 
-// app.register(multipart, {
-//     limits: {
-//       fieldNameSize: 100,
-//       fieldSize: 1024 * 1024 * 5,
-//       fields: 1000,
-//       fileSize: 1024 * 1024 * 50,
-//       files: 100,
-//       headerPairs: 2000,
-//       parts: 1000,
-//     },
-//     attachFieldsToBody: true,
-//   });
+app.register(multipart, {
+    limits: {
+      fieldNameSize: 100,
+      fieldSize: 1024 * 1024 * 5,
+      fields: 1000,
+      fileSize: 1024 * 1024 * 50,
+      files: 100,
+      headerPairs: 2000,
+      parts: 1000,
+    },
+    attachFieldsToBody: true,
+  });
 
 //Root Route
 app.register(RootRoute);
@@ -44,17 +54,27 @@ app.register(RootRoute);
 //Funcao
 app.register(CreateFuncao);
 app.register(GetAllFuncao);
+app.register(GetFuncaoById);
+app.register(GetFuncaoByName);
 
 
 //User
 app.register(CreateUser);
 app.register(GetUser);
 
+//Auth
+app.register(Login);
+app.register(ValidationToken);
+
+//Product
+
+app.register(GetAllProduct);
+
 //Client
-app.register(CreateClient);
-app.register(DeleteClient);
-app.register(UpdateClient);
-app.register(GetClient);
+// app.register(CreateClient);
+// app.register(DeleteClient);
+// app.register(UpdateClient);
+// app.register(GetClient);
 
 
 

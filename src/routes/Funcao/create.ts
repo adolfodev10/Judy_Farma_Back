@@ -10,23 +10,44 @@ export const CreateFuncao = async (app: FastifyInstance) => {
         }
     },
         async (req) => {
-            const { name, description, user } = req.body
+            const body = req.body
 
-            const funcao = await prisma.funcao.create({
-                data: {
-                    name,
-                    description,
-                    ...(user && {
-                        user: {
-                            connect: {
-                                id: user
-                            }
-                        }
-                    })
-                }
-            })
+            if(Array.isArray(body)){
+                const funcoes = await prisma.$transaction(
+                    body.map(funcao => prisma.funcao.create({
+                        data:{
+                            name_funcao : funcao.name_funcao,
+                            description: funcao.description,
+                            ...(funcao.user && {
+                                user:{
+                                    connect: {
+                                        id_user: funcao.user,
+                                    },
+                                },
+                            }),
+                        },
+                    }))
+                );
+                return funcoes;
+            }
+            else {
+                const {name_funcao, description, user} = body;
 
-            return funcao;
-        }
-    )
-}
+                const funcao = await prisma.funcao.create({
+                    data: {
+                        name_funcao,
+                        description,
+                        ...(user && {
+                            user: {
+                                connect:{
+                                    id_user:user,
+                                },
+                                
+                            },
+                        }),
+                    },
+                });
+                return funcao;
+            }
+        });
+};

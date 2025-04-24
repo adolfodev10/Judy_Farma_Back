@@ -1,10 +1,8 @@
 import jwt from "jsonwebtoken";
 
-export const generateToken = (payload: { sub: string; name: string }) => {
-  const token = jwt.sign(payload, process.env.JWT_SECRET || "secret", {
-    expiresIn: "1h",
-  });
+const JWT_TOKEN = process.env.JWT_SECRET || "ola-Mundo-5T";
+
+export const generateToken = async (payload: object) => {
+  const token = jwt.sign(payload, JWT_TOKEN, { expiresIn: "5h" });
   return token;
 };
-
-export default generateToken;
