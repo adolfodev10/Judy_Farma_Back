@@ -45,7 +45,7 @@ export const Login = async (app: FastifyInstance) => {
         id_user: user.id_user,
         name: user.name,
         email: user.email,
-        phone_number:user.phone_number,
+        phone_number: user.phone_number,
         born: user.born,
         id_funcao: user.funcao_id
       }

@@ -3,8 +3,8 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { createProductSchema } from "../../modules/validations/product/create-product";
 import { prisma } from "../../lib/prismaclient";
 
-export const CreateProduct = async (app: FastifyInstance) => {
-    app.withTypeProvider<ZodTypeProvider>().post('/product/create', {
+export const CreateStockProduct = async (app: FastifyInstance) => {
+    app.withTypeProvider<ZodTypeProvider>().post('/stock/create', {
         schema: {
             body: createProductSchema
         },
@@ -25,8 +25,8 @@ export const CreateProduct = async (app: FastifyInstance) => {
                 data: {
                     name_product,
                     price,
-                    description,
-                    date_validate: date_validate,
+                    description:description,
+                    date_validate:date_validate,
                     quantity: quantity,
                 }
             })
