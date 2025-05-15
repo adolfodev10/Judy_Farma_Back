@@ -22,6 +22,8 @@ import { CreateProduct } from "./routes/Product/create";
 import { CreateVenda } from "./routes/Venda/create";
 import { deleteProduct } from "./routes/Stock/delete";
 import { CreateStockProduct } from "./routes/Stock/create";
+import { DeleteProduct } from "./routes/Product/delete";
+import { EditProduct } from "./routes/Product/update";
 
 const app = fastify;
 const port = Number(process.env.PORT) || 3300;
@@ -84,6 +86,8 @@ app.register(ValidationToken);
 
 app.register(GetAllProduct);
 app.register(CreateProduct)
+app.register(DeleteProduct);
+app.register(EditProduct);
 
 //Stock
 app.register(deleteProduct);
