@@ -2,10 +2,10 @@ import { fastify } from "./lib/fastify";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import fastifyCors from "@fastify/cors";
 import { RootRoute } from './routes/root-route';
-// import { DeleteClient } from './routes/Client/delete';
-// import { CreateClient } from './routes/Client/create';
-// import { UpdateClient } from './routes/Client/update';
-// import { GetClient } from "./routes/Client/get";
+import { DeleteClient } from './routes/Client/delete';
+import { CreateClient } from './routes/Client/create';
+import { UpdateClient } from './routes/Client/update';
+import { GetClient } from "./routes/Client/get";
 import { CreateUser } from "./routes/User/create";
 import { GetUser } from "./routes/User/get";
 import { CreateFuncao } from "./routes/Funcao/create";
@@ -24,6 +24,7 @@ import { deleteProduct } from "./routes/Stock/delete";
 import { CreateStockProduct } from "./routes/Stock/create";
 import { DeleteProduct } from "./routes/Product/delete";
 import { EditProduct } from "./routes/Product/update";
+import { EditStock } from "./routes/Stock/update";
 
 const app = fastify;
 const port = Number(process.env.PORT) || 3300;
@@ -92,16 +93,17 @@ app.register(EditProduct);
 //Stock
 app.register(deleteProduct);
 app.register(CreateStockProduct);
+app.register(EditStock);
 
 //Venda
 app.register(GetAllVenda);
 app.register(CreateVenda)
 
 //Client
-// app.register(CreateClient);
-// app.register(DeleteClient);
-// app.register(UpdateClient);
-// app.register(GetClient);
+app.register(CreateClient);
+app.register(DeleteClient);
+app.register(UpdateClient);
+app.register(GetClient);
 
 
 

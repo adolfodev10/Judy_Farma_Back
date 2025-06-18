@@ -53,18 +53,23 @@ model Products {
     date_validate String
     price         String
     quantity      String
+    // stock_id      String
     status        ProductStatus @default(NAO_VENDIDO)
+    // stock         Stock         @relation("ProductToStock", fields: [stock_id], references: [id_stock], onDelete: Cascade)
 }
 
+// model Stock {
+//     id_stock   String     @id @default(uuid())
+//     product_id String
+//     // Products   Products[] @relation("ProductToStock")
+// }
+
 model Clients {
-    id_client  String    @id @default(uuid())
+    id_client  String   @id @default(uuid())
     name       String
     telefone   String
-    invoice_id String?   @unique
-    user_id    String
-    invoices   Invoices? @relation(fields: [invoice_id], references: [id_invoice])
-    created_at DateTime  @default(now())
-    updated_at DateTime  @updatedAt
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
 }
 
 model Invoices {
@@ -72,7 +77,6 @@ model Invoices {
     client_id  String?
     product_id String
     date       DateTime
-    client     Clients?
 }
 
 model Venda {
