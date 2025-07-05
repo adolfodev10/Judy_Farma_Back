@@ -14,7 +14,7 @@ import { Login } from "./routes/Auth/login";
 import { ValidationToken } from "./routes/Auth/validation";
 import { GetFuncaoById } from "./routes/Funcao/getFuncaoById";
 import { GetFuncaoByName } from "./routes/Funcao/getFuncaoByName";
-import { GetAllProduct } from "./routes/Product/get";
+import { GetAllProduct, GetAllProductTheVenda } from "./routes/Product/get";
 import multipart from "@fastify/multipart";
 import { GetUserById } from "./routes/User/getUserById";
 import { GetAllVenda } from "./routes/Venda/get";
@@ -86,6 +86,7 @@ app.register(ValidationToken);
 //Product
 
 app.register(GetAllProduct);
+app.register(GetAllProductTheVenda);
 app.register(CreateProduct)
 app.register(DeleteProduct);
 app.register(EditProduct);

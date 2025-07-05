@@ -10,3 +10,16 @@ export const GetAllProduct = async (app: FastifyInstance) => {
             return reply.status(200).send(products);
         });
 }
+
+
+export const GetAllProductTheVenda = async (app: FastifyInstance) => {
+    app.withTypeProvider<ZodTypeProvider>().get('/product/getAllProductTheVenda', {},
+        async (req, reply) => {
+            const products = await prisma.products.findMany({
+                where: {
+                    status: "NAO_VENDIDO"
+                }
+            });
+            return reply.status(200).send(products);
+        });
+}
