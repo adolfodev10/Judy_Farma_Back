@@ -8,19 +8,20 @@ datasource db {
 }
 
 model Users {
-    id_user      String                @id @default(uuid())
-    name         String
-    email        String                @unique
-    phone_number String?               @unique
-    senha        String
-    avatar       String?
-    born         DateTime
-    created_at   DateTime              @default(now())
-    funcao_id    String
-    updated_at   DateTime              @updatedAt
-    user_status  UserStatus            @default(ACTIVO)
-    avatarImages AvatarImagesArchive[] @relation("UserToAvatarImages")
-    funcao       Funcao                @relation("UserToFuncao", fields: [funcao_id], references: [id_funcao], onDelete: Cascade)
+    id_user            String                @id @default(uuid())
+    name               String
+    email              String                @unique
+    phone_number       String?               @unique
+    senha              String
+    avatar             String?
+    born               DateTime
+    created_at         DateTime              @default(now())
+    funcao_id          String
+    updated_at         DateTime              @updatedAt
+    user_status        UserStatus            @default(ACTIVO)
+    avatarImages       AvatarImagesArchive[] @relation("UserToAvatarImages")
+    funcao             Funcao                @relation("UserToFuncao", fields: [funcao_id], references: [id_funcao], onDelete: Cascade)
+    invoicesId_invoice String?
 }
 
 model AvatarImagesArchive {
@@ -53,38 +54,61 @@ model Products {
     date_validate String
     price         String
     quantity      String
-    // stock_id      String
+    methodPayment MethodPayment @default(CACHE)
+    totalLucro    String?
+    invoice       Invoices?     @relation("ProductToDivida")
     status        ProductStatus @default(NAO_VENDIDO)
     // stock         Stock         @relation("ProductToStock", fields: [stock_id], references: [id_stock], onDelete: Cascade)
+    Venda         Venda[]
 }
 
-// model Stock {
-//     id_stock   String     @id @default(uuid())
-//     product_id String
-//     // Products   Products[] @relation("ProductToStock")
-// }
+model Stock {
+    id_stock      String      @id @default(uuid())
+    name          String
+    description   String?
+    created_at    DateTime    @default(now())
+    updated_at    DateTime    @updatedAt
+    date_validate String
+    price         String
+    quantity      String
+    status        StockStatus @default(NAO_VENDIDO)
+}
 
 model Clients {
-    id_client  String   @id @default(uuid())
+    id_client  String    @id @default(uuid())
     name       String
     telefone   String
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    invoices   Invoices? @relation("ClientToDivida")
 }
 
 model Invoices {
-    id_invoice String   @id @default(uuid())
-    client_id  String?
-    product_id String
+    id_invoice String         @id @default(uuid())
+    client_id  String?        @unique
+    client     Clients        @relation("ClientToDivida", fields: [id_invoice], references: [id_client], onDelete: Cascade)
+    product_id String         @unique
+    product    Products       @relation("ProductToDivida", fields: [product_id], references: [id_product], onDelete: Cascade)
+    price      String
     date       DateTime
+    created_at DateTime       @default(now())
+    updated_at DateTime       @updatedAt
+    approval   ApprovalStatus @default(NAO_PAGAS)
 }
 
 model Venda {
-    id          String   @id @default(uuid())
-    description String
-    product_id  String
-    created_at  DateTime @default(now())
-    updated_at  DateTime @updatedAt
+    id            String        @id @default(uuid())
+    name_product  String
+    description   String?
+    product_id    String
+    product       Products      @relation(fields: [product_id], references: [id_product])
+    methodPayment MethodPayment @default(CACHE)
+    date_validate String
+    price         String
+    quantity      String
+    status        ProductStatus @default(NAO_VENDIDO)
+    created_at    DateTime      @default(now())
+    updated_at    DateTime      @updatedAt
 }
 
 enum UserStatus {
@@ -101,4 +125,21 @@ enum ProductStatus {
     VENDIDO
     NAO_VENDIDO
     EXPIRADO
+    VENDENDO
+}
+
+enum StockStatus {
+    NAO_VENDIDO
+    EXPIRADO
+}
+
+enum MethodPayment {
+    MULTICAIXA_EXPRESS
+    CACHE
+    TPA
+}
+
+enum ApprovalStatus {
+    PAGAS
+    NAO_PAGAS
 }

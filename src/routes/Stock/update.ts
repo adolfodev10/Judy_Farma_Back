@@ -4,13 +4,13 @@ import { z } from "zod";
 import { prisma } from "../../lib/prismaclient";
 
 export const EditStock = async (app: FastifyInstance) => {
-    app.withTypeProvider<ZodTypeProvider>().put('/stock/update/:id', {
+    app.withTypeProvider<ZodTypeProvider>().put('/stock/update/:id_stock', {
         schema: {
             params: z.object({
-                id: z.string().uuid(),
+                id_stock: z.string().uuid(),
             }),
             body: z.object({
-                name_product: z.string().optional(),
+                name: z.string().optional(),
                 description: z.string().optional(),
                 price: z.string().optional(),
                 quantity: z.string().optional(),
@@ -18,26 +18,26 @@ export const EditStock = async (app: FastifyInstance) => {
             }),
         },
     }, async (req, reply) => {
-        const { id } = req.params;
-        const { name_product, description, price, quantity, date_validate } = req.body;
-        if (!id) {
+        const { id_stock } = req.params;
+        const { name, description, price, quantity, date_validate } = req.body;
+        if (!id_stock) {
             return reply.status(400).send({ message: "O campo id é obrigatório" });
         }
-        const stockExists = await prisma.products.findUnique({
+        const stockExists = await prisma.stock.findUnique({
             where: {
-                id_product: id,
+                id_stock: id_stock,
             },
         });
 
         if (!stockExists) {
             return reply.status(404).send({ message: "Produto não encontrado" });
         }
-        const stock = await prisma.products.update({
+        const stock = await prisma.stock.update({
             where: {
-                id_product: stockExists.id_product,
+                id_stock: stockExists.id_stock,
             },
             data: {
-                name_product,
+                name,
                 description,
                 price,
                 quantity,
@@ -46,9 +46,9 @@ export const EditStock = async (app: FastifyInstance) => {
         });
 
         if (Number(stock.quantity) <= 0) {
-            await prisma.products.delete({
+            await prisma.stock.delete({
                 where: {
-                    id_product: stockExists.id_product,
+                    id_stock: stockExists.id_stock,
                 },
             });
             return reply.status(200).send({ message: "Produto apagado com sucesso" });

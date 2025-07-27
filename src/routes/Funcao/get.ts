@@ -9,3 +9,17 @@ export const GetAllFuncao = async (app: FastifyInstance) => {
             return { funcoes };
         });
 }
+
+export const GetAllFuncaoNotAdmin = async (app: FastifyInstance) => {
+    app.withTypeProvider<ZodTypeProvider>().get('/funcao/getAllNotAdmin', {},
+        async () => {
+            const funcoes = await prisma.funcao.findMany({
+                where: {
+                    name_funcao: {
+                        not: "ADMINISTRADOR"
+                    }
+                }
+            });
+            return { funcoes };
+        });
+}

@@ -10,15 +10,28 @@ export const CreateVenda = async (app: FastifyInstance) => {
         },
     },
         async (req, res) => {
-            const { name, price, description } = req.body;
+            const { product_id, description,methodPayment, price, date_validate, name_product, quantity, created_at, updated_at } = req.body;
 
-            const vendaExists = await prisma.venda.findFirst({
+            const produto = await prisma.products.findUnique({
                 where: {
-                    OR: [
-                        {
-                            description
-                        },
-                    ],
+                    id_product: product_id
+                }
+            });
+            if (!produto) {
+                return res.status(404).send({ message: "Produto nao encontrado" });
+            }
+
+            const vendaExists = await prisma.venda.create({
+                data: {
+                    product_id: produto.id_product,
+                    description: description ?? "",
+                    methodPayment,
+                    price,
+                    date_validate,
+                    name_product : name_product ?? "",
+                    quantity: quantity ?? "",
+                    created_at,
+                    updated_at
                 }
             });
             return res.status(200).send(vendaExists);

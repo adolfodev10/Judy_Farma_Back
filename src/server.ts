@@ -9,12 +9,12 @@ import { GetClient } from "./routes/Client/get";
 import { CreateUser } from "./routes/User/create";
 import { GetUser } from "./routes/User/get";
 import { CreateFuncao } from "./routes/Funcao/create";
-import { GetAllFuncao } from "./routes/Funcao/get";
+import { GetAllFuncao, GetAllFuncaoNotAdmin } from "./routes/Funcao/get";
 import { Login } from "./routes/Auth/login";
 import { ValidationToken } from "./routes/Auth/validation";
 import { GetFuncaoById } from "./routes/Funcao/getFuncaoById";
 import { GetFuncaoByName } from "./routes/Funcao/getFuncaoByName";
-import { GetAllProduct, GetAllProductTheVenda } from "./routes/Product/get";
+import { GetAllProduct, GetAllProductTheVenda, GetProfitByMonth } from "./routes/Product/get";
 import multipart from "@fastify/multipart";
 import { GetUserById } from "./routes/User/getUserById";
 import { GetAllVenda } from "./routes/Venda/get";
@@ -25,6 +25,12 @@ import { CreateStockProduct } from "./routes/Stock/create";
 import { DeleteProduct } from "./routes/Product/delete";
 import { EditProduct } from "./routes/Product/update";
 import { EditStock } from "./routes/Stock/update";
+import { UpdateUser } from "./routes/User/update";
+import { GetAllProductStock } from "./routes/Stock/get";
+import { DeleteUser } from "./routes/User/delete";
+import { CreateInvoice } from "./routes/Invoices/create";
+import { GetAllInvoice } from "./routes/Invoices/get";
+import { AddProductInStock } from "./routes/Product/add";
 
 const app = fastify;
 const port = Number(process.env.PORT) || 3300;
@@ -72,29 +78,33 @@ app.register(CreateFuncao);
 app.register(GetAllFuncao);
 app.register(GetFuncaoById);
 app.register(GetFuncaoByName);
-
+app.register(GetAllFuncaoNotAdmin);
 
 //User
 app.register(CreateUser);
 app.register(GetUser);
 app.register(GetUserById);
+app.register(UpdateUser);
+app.register(DeleteUser);
 
 //Auth
 app.register(Login);
 app.register(ValidationToken);
 
 //Product
-
+app.register(AddProductInStock);
 app.register(GetAllProduct);
 app.register(GetAllProductTheVenda);
 app.register(CreateProduct)
 app.register(DeleteProduct);
 app.register(EditProduct);
+app.register(GetProfitByMonth)
 
 //Stock
 app.register(deleteProduct);
 app.register(CreateStockProduct);
 app.register(EditStock);
+app.register(GetAllProductStock);
 
 //Venda
 app.register(GetAllVenda);
@@ -105,6 +115,10 @@ app.register(CreateClient);
 app.register(DeleteClient);
 app.register(UpdateClient);
 app.register(GetClient);
+
+//Invoice
+app.register(CreateInvoice);
+app.register(GetAllInvoice);
 
 
 
