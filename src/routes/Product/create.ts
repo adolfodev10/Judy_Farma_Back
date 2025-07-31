@@ -20,10 +20,11 @@ export const CreateProduct = async (app: FastifyInstance) => {
                     ],
                 }
             })
-            if (productExists) return reply.status(400).send({ error: "Product name already exists" })
+            if (productExists) return reply.status(200).send({ productExists })
+
             const products = await prisma.products.create({
                 data: {
-                    name_product,
+                    name_product: name_product ?? "",
                     price,
                     description,
                     date_validate: date_validate,

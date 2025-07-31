@@ -9,30 +9,19 @@ export const CreateInvoice = async (app: FastifyInstance) => {
             body: createInvoiceSchema
         },
     },
-async (req, reply) => {
-    const {client_id,product_id, approval, price, date} = req.body;
+        async (req, reply) => {
+            const { client_id, product_id, approval, price, date } = req.body;
 
-    const invoiceExists = await prisma.invoices.findFirst({
-        where: {
-            OR: [
-                {
+            const invoice = await prisma.invoices.create({
+                data: {
                     client_id,
                     product_id,
-                    price: price,
-                },
-            ],
+                    price,
+                    date,
+                    approval: "NAO_PAGAS"
+                }
+            })
+            return reply.code(201).send({ invoice });
         }
-    }) 
-    if(invoiceExists) return reply.status(400).send({error : "Cliente Já tem dívida"});
-    const invoice = await prisma.invoices.create({
-        data:{
-            client_id,
-            product_id,
-            price,
-            date,
-        }
-    })
-    return reply.code(201).send({invoice});
-}
-)
+    )
 }

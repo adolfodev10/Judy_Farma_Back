@@ -4,27 +4,27 @@ import { z } from "zod";
 import { prisma } from "../../lib/prismaclient";
 
 export const deleteProduct = async (app: FastifyInstance) => {
-    app.withTypeProvider<ZodTypeProvider>().delete("/stock/delete/:id_product", {
+    app.withTypeProvider<ZodTypeProvider>().delete("/stock/delete/:id_stock", {
         schema: {
             params: z.object({
-                id_product: z.string().nonempty("O Campo id é obriigatório."),
+                id_stock: z.string().nonempty("O Campo id é obrigatório."),
             }),
         },
     }, async (req, reply) => {
-        const { id_product } = req.params;
+        const { id_stock } = req.params;
 
-        const product = await prisma.products.findUnique({
+        const product = await prisma.stock.findUnique({
             where: {
-                id_product,
+                id_stock,
             },
         });
 
         if (!product) {
             return reply.status(404).send({ message: "Produto não encontrado" });
         }
-        await prisma.products.delete({
+        await prisma.stock.delete({
             where: {
-                id_product,
+                id_stock,
             },
         });
 

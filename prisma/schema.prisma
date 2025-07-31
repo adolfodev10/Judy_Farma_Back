@@ -59,7 +59,6 @@ model Products {
     invoice       Invoices?     @relation("ProductToDivida")
     status        ProductStatus @default(NAO_VENDIDO)
     // stock         Stock         @relation("ProductToStock", fields: [stock_id], references: [id_stock], onDelete: Cascade)
-    Venda         Venda[]
 }
 
 model Stock {
@@ -98,10 +97,8 @@ model Invoices {
 
 model Venda {
     id            String        @id @default(uuid())
-    name_product  String
+    name_product  String?
     description   String?
-    product_id    String
-    product       Products      @relation(fields: [product_id], references: [id_product])
     methodPayment MethodPayment @default(CACHE)
     date_validate String
     price         String
@@ -109,6 +106,7 @@ model Venda {
     status        ProductStatus @default(NAO_VENDIDO)
     created_at    DateTime      @default(now())
     updated_at    DateTime      @updatedAt
+    date_venda    DateTime?     @default(now())
 }
 
 enum UserStatus {

@@ -23,7 +23,7 @@ export const CreateStockProduct = async (app: FastifyInstance) => {
             if (productExists) return reply.status(400).send({ error: "Product name already exists" })
             const products = await prisma.stock.create({
                 data: {
-                    name: name_product,
+                    name: name_product ?? "",
                     price,
                     description: description,
                     date_validate: date_validate,
