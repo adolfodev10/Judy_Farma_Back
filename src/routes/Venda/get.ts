@@ -5,7 +5,7 @@ import { z } from "zod";
 
 export const GetAllVenda = async (app: FastifyInstance) => {
     app.withTypeProvider<ZodTypeProvider>().get("/venda/getAll", {},
-        async (req, reply) => {
+        async (request, reply) => {
             const vendas = await prisma.venda.findMany();
             return reply.status(200).send(vendas);
         });
@@ -24,7 +24,7 @@ export const GetProfitByMonth = async (app: FastifyInstance) => {
             }
         }
     },
-        async (req, reply) => {
+        async (request, reply) => {
             const produtosVendidos = await prisma.products.findMany({
                 where: {
                     status: "NAO_VENDIDO",
