@@ -32,7 +32,7 @@ import { CreateInvoice } from "./routes/Invoices/create";
 import { GetAllInvoice } from "./routes/Invoices/get";
 import { AddProductInStock } from "./routes/Product/add";
 import socketPlugin from "./plugins/socket";
-import { startExpirationJob } from "./jobs/expired-products";
+// import { startExpirationJob } from "./jobs/expired-products";
 
 const app = fastify;
 const port = Number(process.env.PORT) || 3300;
@@ -71,9 +71,9 @@ app.register(multipart, {
   attachFieldsToBody: true,
 });
 
-app.ready().then(()=> {
-  startExpirationJob(app);
-})
+// app.ready().then(()=> {
+//   startExpirationJob(app);
+// })
 
 app.register(socketPlugin);
 
