@@ -100,7 +100,7 @@ model Venda {
     name_product  String?
     description   String?
     methodPayment MethodPayment @default(CACHE)
-    date_validate String
+    date_validate DateTime
     price         String
     quantity      String
     status        ProductStatus @default(NAO_VENDIDO)
