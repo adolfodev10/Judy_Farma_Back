@@ -45,7 +45,7 @@ app.register(fastifyCors, {
     'http://localhost:3001',
     'http://localhost:5173',
     'http://localhost:5174',
-    'https://judyfarma.vercel.app',
+    'https://judy-farma.vercel.app',
     'https://judyfarma-support.vercel.app',
   ],
   credentials: true,
