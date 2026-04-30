@@ -10,12 +10,12 @@ export const UpdateUser = async (app: FastifyInstance) => {
                 id: z.string(),
             }),
             body: z.object({
-                name: z.string(),
-                email: z.string(),
-                phone_number: z.string(),
+                name: z.string().optional(),
+                email: z.string().optional(),
+                phone_number: z.string().optional(),
                 avatar: z.string().optional(),
-                user_status: z.string(),
-                funcao_id: z.string(),
+                user_status: z.string().optional(),
+                funcao_id: z.string().optional(),
             })
         },
     },
@@ -46,7 +46,7 @@ export const UpdateUser = async (app: FastifyInstance) => {
                     email,
                     phone_number,
                     avatar,
-                    user_status: user_status as any,
+                    user_status: user_status as "ACTIVO" || "INATIVO",
                     funcao_id,
                 },
             });

@@ -17,13 +17,13 @@ export const GetUserById = async (app: FastifyInstance) => {
             const user = await prisma.users.findUnique({
                 where: {
                     id_user: userId,
-                    user_status: "ACTIVO",
+                    // user_status: "ACTIVO",
                 },
             });
 
-            if (user?.user_status === "INATIVO") {
-                throw new Error("User is Inactive");
-            }
+            // if (user?.user_status === "INATIVO") {
+            //     throw new Error("User is Inactive");
+            // }
 
             if (!user) {
                 throw new Error("User not found");

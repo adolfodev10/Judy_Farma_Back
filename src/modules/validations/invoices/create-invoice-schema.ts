@@ -1,9 +1,12 @@
 import { z } from "zod";
 
 export const createInvoiceSchema = z.object({
-    client_id: z.string().uuid().optional(),
-    product_id: z.string().uuid(),
+    id_invoice: z.string().uuid(),
+    client_id: z.string().uuid(),
+    product_id: z.string().uuid().optional(),
     price: z.string(),
-    approval: z.string().optional(),
     date: z.coerce.date(),
+    approval: z.string(),
+    created_at: z.coerce.date().optional(),
+    update_at: z.coerce.date().optional(),
 })

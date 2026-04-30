@@ -10,17 +10,23 @@ export const CreateInvoice = async (app: FastifyInstance) => {
         },
     },
         async (req, reply) => {
-            const { client_id, product_id, approval, price, date } = req.body;
+            const { id_invoice, client_id, product_id = "", price, date, approval = "NAO_PAGAS" } = req.body;
 
-            const invoice = await prisma.invoices.create({
-                data: {
-                    client_id,
-                    product_id,
-                    price,
-                    date,
-                    approval: "NAO_PAGAS"
-                }
-            })
+            const data: any = {
+                id_invoice,
+                client_id,
+                product_id,
+                price,
+                date,
+                approval: "NAO_PAGAS",
+                updated_at: new Date(),
+            };
+
+            if (product_id) {
+                data.product_id = product_id;
+            }
+
+            const invoice = await prisma.invoices.create({ data })
             return reply.code(201).send({ invoice });
         }
     )

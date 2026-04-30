@@ -16,13 +16,45 @@ model Users {
     avatar             String?
     born               DateTime
     created_at         DateTime              @default(now())
-    funcao_id          String
     updated_at         DateTime              @updatedAt
     user_status        UserStatus            @default(ACTIVO)
+    perfis             UserPerfil[]
+    funcao_id          String
     avatarImages       AvatarImagesArchive[] @relation("UserToAvatarImages")
     funcao             Funcao                @relation("UserToFuncao", fields: [funcao_id], references: [id_funcao], onDelete: Cascade)
-    invoicesId_invoice String?
+
+    @@map("users")
 }
+
+model UserPerfil {
+  id         String   @id @default(uuid())
+  user_id    String
+  perfil_id  String
+  created_at DateTime @default(now())
+  perfil     Perfil   @relation(fields: [perfil_id], references: [id], onDelete: Cascade)
+  user       Users    @relation(fields: [user_id], references: [id_user], onDelete: Cascade)
+
+  @@unique([user_id, perfil_id])
+  @@index([perfil_id], map: "user_perfis_perfil_id_fkey")
+  @@map("user_perfis")
+}
+
+model Perfil {
+  id             String       @id @default(uuid())
+  nome           String       @unique
+  descricao      String
+  nivel          Int          @default(1)
+  permissoes     String       @db.LongText
+  usuarios_count Int          @default(0)
+  is_default     Boolean      @default(false)
+  is_system      Boolean      @default(false)
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  users          UserPerfil[]
+
+  @@map("perfil")
+}
+
 
 model AvatarImagesArchive {
     id_avatar  String   @id @default(uuid())
@@ -56,7 +88,7 @@ model Products {
     quantity      String
     methodPayment MethodPayment @default(CACHE)
     totalLucro    String?
-    invoice       Invoices?     @relation("ProductToDivida")
+    invoice       Invoices[]
     status        ProductStatus @default(NAO_VENDIDO)
     // stock         Stock         @relation("ProductToStock", fields: [stock_id], references: [id_stock], onDelete: Cascade)
 }
@@ -74,25 +106,29 @@ model Stock {
 }
 
 model Clients {
-    id_client  String    @id @default(uuid())
+    id_client  String     @id @default(uuid())
     name       String
     telefone   String
-    created_at DateTime  @default(now())
-    updated_at DateTime  @updatedAt
-    invoices   Invoices? @relation("ClientToDivida")
+    nif        String?
+    created_at DateTime   @default(now())
+    updated_at DateTime   @updatedAt
+    invoices   Invoices[]
 }
 
 model Invoices {
-    id_invoice String         @id @default(uuid())
-    client_id  String?        @unique
-    client     Clients        @relation("ClientToDivida", fields: [id_invoice], references: [id_client], onDelete: Cascade)
-    product_id String         @unique
-    product    Products       @relation("ProductToDivida", fields: [product_id], references: [id_product], onDelete: Cascade)
-    price      String
-    date       DateTime
-    created_at DateTime       @default(now())
-    updated_at DateTime       @updatedAt
-    approval   ApprovalStatus @default(NAO_PAGAS)
+    id_invoice       String         @id @default(uuid())
+    client_id        String
+    product_id       String
+    price            String
+    date             DateTime
+    created_at       DateTime       @default(now())
+    updated_at       DateTime       @updatedAt
+    approval         InvoicesApproval @default(NAO_PAGAS)
+    clients           Clients        @relation(fields: [client_id], references: [id_client], onDelete: Cascade, map: "Invoices_client_id_fkey")
+    products         Products       @relation(fields: [product_id], references: [id_product], onDelete: Cascade, map: "Invoices_product_id_fkey")
+
+    @@index([client_id], map: "Invoices_client_id_fkey")
+    @@index([product_id], map: "Invoices_product_id_fkey")
 }
 
 model Venda {
@@ -107,6 +143,17 @@ model Venda {
     created_at    DateTime      @default(now())
     updated_at    DateTime      @updatedAt
     date_venda    DateTime?     @default(now())
+}
+
+enum Role {
+  ADMINISTRADOR
+  OPERADOR
+  GERENTE
+}
+
+enum InvoicesApproval {
+  PAGAS
+  NAO_PAGAS
 }
 
 enum UserStatus {
