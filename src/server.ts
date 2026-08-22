@@ -32,6 +32,7 @@ import { CreateInvoice } from "./routes/Invoices/create";
 import { GetAllInvoice } from "./routes/Invoices/get";
 import { AddProductInStock } from "./routes/Product/add";
 import socketPlugin from "./plugins/socket";
+import { GetInvoicesByClientId } from "./routes/Invoices/getById";
 // import { startExpirationJob } from "./jobs/expired-products";
 
 const app = fastify;
@@ -57,6 +58,7 @@ app.register(fastifyCors, {
     "OPTION"
   ]
 });
+
 
 app.register(multipart, {
   limits: {
@@ -128,6 +130,7 @@ app.register(GetClient);
 //Invoice
 app.register(CreateInvoice);
 app.register(GetAllInvoice);
+app.register(GetInvoicesByClientId);
 
 
 

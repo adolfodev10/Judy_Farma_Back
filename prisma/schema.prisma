@@ -3,58 +3,27 @@ generator client {
 }
 
 datasource db {
-    provider = "mysql"
+    provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
 model Users {
-    id_user            String                @id @default(uuid())
-    name               String
-    email              String                @unique
-    phone_number       String?               @unique
-    senha              String
-    avatar             String?
-    born               DateTime
-    created_at         DateTime              @default(now())
-    updated_at         DateTime              @updatedAt
-    user_status        UserStatus            @default(ACTIVO)
-    perfis             UserPerfil[]
-    funcao_id          String
-    avatarImages       AvatarImagesArchive[] @relation("UserToAvatarImages")
-    funcao             Funcao                @relation("UserToFuncao", fields: [funcao_id], references: [id_funcao], onDelete: Cascade)
+    id_user      String                @id @default(uuid())
+    name         String
+    email        String                @unique(map: "users_email_unique")
+    phone_number String?               @unique(map: "users_phone_unique")
+    senha        String
+    avatar       String?
+    born         DateTime
+    created_at   DateTime              @default(now())
+    updated_at   DateTime              @updatedAt
+    user_status  String                @default("ACTIVO")
+    funcao_id    String
+    avatarImages AvatarImagesArchive[] @relation("UserToAvatarImages")
+    funcao       Funcao                @relation("UserToFuncao", fields: [funcao_id], references: [id_funcao], onDelete: Cascade)
 
     @@map("users")
 }
-
-model UserPerfil {
-  id         String   @id @default(uuid())
-  user_id    String
-  perfil_id  String
-  created_at DateTime @default(now())
-  perfil     Perfil   @relation(fields: [perfil_id], references: [id], onDelete: Cascade)
-  user       Users    @relation(fields: [user_id], references: [id_user], onDelete: Cascade)
-
-  @@unique([user_id, perfil_id])
-  @@index([perfil_id], map: "user_perfis_perfil_id_fkey")
-  @@map("user_perfis")
-}
-
-model Perfil {
-  id             String       @id @default(uuid())
-  nome           String       @unique
-  descricao      String
-  nivel          Int          @default(1)
-  permissoes     String       @db.LongText
-  usuarios_count Int          @default(0)
-  is_default     Boolean      @default(false)
-  is_system      Boolean      @default(false)
-  created_at     DateTime     @default(now())
-  updated_at     DateTime     @updatedAt
-  users          UserPerfil[]
-
-  @@map("perfil")
-}
-
 
 model AvatarImagesArchive {
     id_avatar  String   @id @default(uuid())
@@ -72,37 +41,42 @@ model Funcao {
     description String?
     created_at  DateTime    @default(now())
     updated_at  DateTime    @updatedAt
-    status      TableStatus @default(ACTIVO)
+    status      String      @default("ACTIVO")
     users       Users[]     @relation("UserToFuncao")
+
+    @@map("funcao")
 }
 
 model Products {
-    id_product    String        @id @default(uuid())
+    id_product    String     @id @default(uuid())
     name_product  String
     description   String?
     logo          String?
-    created_at    DateTime      @default(now())
-    updated_at    DateTime      @updatedAt
+    created_at    DateTime   @default(now())
+    updated_at    DateTime   @updatedAt
     date_validate String
     price         String
     quantity      String
-    methodPayment MethodPayment @default(CACHE)
+    methodPayment String     @default("CACHE")
     totalLucro    String?
     invoice       Invoices[]
-    status        ProductStatus @default(NAO_VENDIDO)
-    // stock         Stock         @relation("ProductToStock", fields: [stock_id], references: [id_stock], onDelete: Cascade)
+    status        String     @default("NAO_VENDIDO")
+
+    @@map("products")
 }
 
 model Stock {
-    id_stock      String      @id @default(uuid())
+    id_stock      String   @id @default(uuid())
     name          String
     description   String?
-    created_at    DateTime    @default(now())
-    updated_at    DateTime    @updatedAt
+    created_at    DateTime @default(now())
+    updated_at    DateTime @updatedAt
     date_validate String
     price         String
     quantity      String
-    status        StockStatus @default(NAO_VENDIDO)
+    status        String   @default("NAO_VENDIDO")
+
+    @@map("stock")
 }
 
 model Clients {
@@ -113,78 +87,39 @@ model Clients {
     created_at DateTime   @default(now())
     updated_at DateTime   @updatedAt
     invoices   Invoices[]
+
+    @@map("clients")
 }
 
 model Invoices {
-    id_invoice       String         @id @default(uuid())
-    client_id        String
-    product_id       String
-    price            String
-    date             DateTime
-    created_at       DateTime       @default(now())
-    updated_at       DateTime       @updatedAt
-    approval         InvoicesApproval @default(NAO_PAGAS)
-    clients           Clients        @relation(fields: [client_id], references: [id_client], onDelete: Cascade, map: "Invoices_client_id_fkey")
-    products         Products       @relation(fields: [product_id], references: [id_product], onDelete: Cascade, map: "Invoices_product_id_fkey")
+    id_invoice  String   @id @default(uuid())
+    client_id   String
+    product_id  String
+    price       String
+    date        DateTime
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt
+    approval    String   @default("NAO_PAGAS")
+    clients     Clients  @relation(fields: [client_id], references: [id_client], onDelete: Cascade)
+    products    Products @relation(fields: [product_id], references: [id_product], onDelete: Cascade)
 
-    @@index([client_id], map: "Invoices_client_id_fkey")
-    @@index([product_id], map: "Invoices_product_id_fkey")
+    @@index([client_id])
+    @@index([product_id])
+    @@map("invoices")
 }
 
 model Venda {
-    id            String        @id @default(uuid())
+    id            String   @id @default(uuid())
     name_product  String?
     description   String?
-    methodPayment MethodPayment @default(CACHE)
+    methodPayment String   @default("CACHE")
     date_validate DateTime
     price         String
     quantity      String
-    status        ProductStatus @default(NAO_VENDIDO)
-    created_at    DateTime      @default(now())
-    updated_at    DateTime      @updatedAt
-    date_venda    DateTime?     @default(now())
-}
+    status        String   @default("VENDIDO")
+    created_at    DateTime @default(now())
+    updated_at    DateTime @updatedAt
+    date_venda    DateTime @default(now())
 
-enum Role {
-  ADMINISTRADOR
-  OPERADOR
-  GERENTE
-}
-
-enum InvoicesApproval {
-  PAGAS
-  NAO_PAGAS
-}
-
-enum UserStatus {
-    ACTIVO
-    INATIVO
-}
-
-enum TableStatus {
-    ACTIVO
-    INATIVO
-}
-
-enum ProductStatus {
-    VENDIDO
-    NAO_VENDIDO
-    EXPIRADO
-    VENDENDO
-}
-
-enum StockStatus {
-    NAO_VENDIDO
-    EXPIRADO
-}
-
-enum MethodPayment {
-    MULTICAIXA_EXPRESS
-    CACHE
-    TPA
-}
-
-enum ApprovalStatus {
-    PAGAS
-    NAO_PAGAS
+    @@map("venda")
 }

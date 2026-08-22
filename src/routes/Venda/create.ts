@@ -17,7 +17,7 @@ export const CreateVenda = async (app: FastifyInstance) => {
                     id,
                     name_product: name_product ?? "",
                     description: description ?? "",
-                    status:status ?? "VENDIDO",
+                    status: status ?? "VENDIDO",
                     methodPayment,
                     price: price ?? 0,
                     date_validate: date_validate,
@@ -27,6 +27,9 @@ export const CreateVenda = async (app: FastifyInstance) => {
                     updated_at: new Date(updated_at),
                 }
             });
+
+          
+
             // fastify.io.emit("admin_notificatin", {
             //     type: "venda",
             //     title: "Produto Vendido",

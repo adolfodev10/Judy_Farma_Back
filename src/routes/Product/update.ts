@@ -31,6 +31,7 @@ export const EditProduct = async (app: FastifyInstance) => {
         });
 
         if (!productExists) {
+            console.log("🍀 Produto: ", productExists);
             return reply.status(404).send({ message: "Produto nao encontrado" });
         }
 
