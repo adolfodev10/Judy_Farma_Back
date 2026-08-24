@@ -12,23 +12,25 @@ export const CreateVenda = async (app: FastifyInstance) => {
     },
         async (req, res) => {
             const { id, description, status, date_venda, methodPayment, price, date_validate, name_product, quantity, created_at, updated_at } = req.body;
-            const venda = await prisma.venda.create({
-                data: {
-                    id,
+            const data: any = {
                     name_product: name_product ?? "",
                     description: description ?? "",
                     status: status ?? "VENDIDO",
                     methodPayment,
-                    price: price ?? 0,
+                    price: price ?? "0",
                     date_validate: date_validate,
                     quantity: quantity ?? "",
-                    date_venda: date_venda,
+                    date_venda: date_venda ? new Date(date_venda) : new Date(),
                     created_at: new Date(created_at),
                     updated_at: new Date(updated_at),
-                }
-            });
+            }
+            if(id) {
+                data.id = id;
+            }
 
-          
+            const venda = await prisma.venda.create({
+                data
+            });
 
             // fastify.io.emit("admin_notificatin", {
             //     type: "venda",

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const createVendaSchema = z.object({
-    id: z.string().uuid(),
+    id: z.string().uuid().optional(),
     name_product:z.string().optional(),
     description: z.string().optional(),
     methodPayment: z.enum(["MULTICAIXA_EXPRESS", "CACHE", "TPA"]),
