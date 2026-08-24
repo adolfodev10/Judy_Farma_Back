@@ -33,6 +33,10 @@ import { GetAllInvoice } from "./routes/Invoices/get";
 import { AddProductInStock } from "./routes/Product/add";
 import socketPlugin from "./plugins/socket";
 import { GetInvoicesByClientId } from "./routes/Invoices/getById";
+import { CreateFatura } from "./routes/Fatura/create";
+import { GetFaturaByNumber } from "./routes/Fatura/getByNumber";
+import { GetFaturas } from "./routes/Fatura/get";
+import { GetFaturaById } from "./routes/Fatura/getById";
 // import { startExpirationJob } from "./jobs/expired-products";
 
 const app = fastify;
@@ -90,6 +94,12 @@ app.register(GetAllFuncao);
 app.register(GetFuncaoById);
 app.register(GetFuncaoByName);
 app.register(GetAllFuncaoNotAdmin);
+
+//Fatura
+app.register(CreateFatura);
+app.register(GetFaturaByNumber);
+app.register(GetFaturas);
+app.register(GetFaturaById);
 
 //User
 app.register(CreateUser);
