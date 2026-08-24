@@ -80,6 +80,63 @@ model Stock {
     @@map("stock")
 }
 
+model Fatura {
+  id                 String   @id @default(uuid())
+  numero             String   @unique
+  dataEmissao        DateTime
+  dataVencimento     DateTime?
+  
+  // Dados do Cliente
+  clienteNome        String
+  clienteNif         String?
+  clienteEndereco    String?
+  clienteTelefone    String?
+  clienteEmail       String?
+  clienteCodigo      String?
+  
+  // Dados da Empresa
+  empresaNome        String
+  empresaNif         String
+  empresaEndereco    String
+  empresaTelefone    String
+  empresaEmail       String?
+  empresaRegimeIVA   String?  @default("Regime Normal")
+  empresaCodigoEstabelecimento String? @default("001")
+  
+  // Itens da Fatura (armazenados como JSON)
+  itens              Json
+  
+  // Totais
+  semImpostos        Float
+  impostos           Float
+  descontos          Float  @default(0)
+  totalPagar         Float
+  
+  // Informações Adicionais
+  formaPagamento     String
+  operador           String
+  operadorId         String?
+  hashFiscal         String?
+  qrCodeData         String?
+  observacoes        String?
+  
+  // Status
+  status             String @default("EMITIDA") // EMITIDA | CANCELADA | PAGA
+  statusAGT          String @default("PENDENTE") // PENDENTE | ENVIADO | ERRO
+  
+  // Timestamps
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  // Índices para melhor performance
+  @@index([numero])
+  @@index([clienteNome])
+  @@index([dataEmissao])
+  @@index([status])
+  @@index([statusAGT])
+  @@map("faturas")
+}
+
 model Clients {
     id_client  String     @id @default(uuid())
     name       String
