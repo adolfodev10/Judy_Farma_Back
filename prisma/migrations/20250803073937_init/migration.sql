@@ -138,7 +138,7 @@ CREATE UNIQUE INDEX "Users_email_key" ON "public"."Users"("email");
 CREATE UNIQUE INDEX "Users_phone_number_key" ON "public"."Users"("phone_number");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Invoices_client_id_key" ON "public"."Invoices"("client_id");
+CREATE UNIQUE INDEX "Invoices_clients_id_key" ON "public"."Invoices"("client_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Invoices_product_id_key" ON "public"."Invoices"("product_id");

@@ -17,7 +17,7 @@ export const Login = async (app: FastifyInstance) => {
     async (request, reply) => {
       const { email, password } = request.body;
 
-      const user = await prisma.users.findUnique({
+      const user = await prisma.users.findFirst({
         where: {
           email,
           user_status: "ACTIVO"
